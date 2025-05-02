@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Driver Portal</title>
+</head>
+<body>
+  <a href="/">Go back to home page</a>
+  <h1>Driver Login</h1>
+
+  <!-- Login Form -->
+  <form id="loginForm" method="POST" action="/driver/login">
+    <label>Name</label>
+    <input name="name" placeholder="Enter your name" required />
+    <button type="submit">Login</button>
+  </form>
+
+  <!-- Registration Section (simplified) -->
+  <h3>Don't have an account yet? Register:</h3>
+  <form id="registerForm" method="POST" action="/driver/register">
+    <label>Name</label>
+    <input name="name" placeholder="Type your name" required />
+    <button>Register</button>
+  </form>
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+
+    loginForm?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      fetch("/driver/login", {
+        method: "POST",
+        body: new FormData(loginForm)
+      }).then(res => {
+        if (!res.ok) {
+          alert("Login failed: check your name or try again.");
+          return;
+        }
+        window.location.href = "/driver/home";
+      }).catch(console.error);
+    });
+
+    registerForm?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      fetch("/driver/register", {
+        method: "POST",
+        body: new FormData(registerForm)
+      }).then(res => {
+        if (!res.ok) {
+          alert("Registration failed: name may already exist.");
+          return;
+        }
+        alert("Registered successfully. Please log in.");
+        window.location.reload();
+      }).catch(console.error);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Dashboard</title>
+  <style>
+    .box {
+      border: 1px solid black;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome, {{ name }}!</h1>
+  <button id="logout">Logout</button>
+
+  <div class="box">
+    <h3>View Available Car Models on a Date</h3>
+    <form id="availableModelsForm">
+      <label>Date</label>
+      <input type="date" name="date" required />
+      <button type="submit">Check Availability</button>
+    </form>
+    <table>
+      <thead>
+        <tr><th>Model ID</th><th>Car ID</th><th>Color</th><th>Year</th><th>Transmission</th></tr>
+      </thead>
+      <tbody id="availableModelsTable"></tbody>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>Book a Rent</h3>
+    <form id="combinedBookForm">
+      <label>Model ID</label>
+      <input name="model_id" required />
+      <label>Car ID</label>
+      <input name="car_id" required />
+      <label>Date</label>
+      <input type="date" name="date" required />
+      <label>
+        <input type="checkbox" id="bestDriverToggle" />
+        Book with best driver instead
+      </label>
+      <button type="submit">Book</button>
+    </form>
+  </div>
+
+  <div class="box">
+    <h3>My Rent History</h3>
+    <button id="fetchRentHistory">Refresh</button>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Model</th><th>Driver</th></tr>
+      </thead>
+      <tbody id="rentHistoryTable"></tbody>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>Leave a Review</h3>
+    <form id="reviewForm">
+      <label>Driver Name</label>
+      <input name="driver_name" required />
+      <label>Rating (0-5)</label>
+      <input type="number" name="rating" min="0" max="5" required />
+      <label>Message</label>
+      <input name="message" required />
+      <button type="submit">Submit Review</button>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("logout")?.addEventListener("click", () => {
+        fetch("/client/logout").then(() => window.location.href = "/client")
+      });
+
+      document.getElementById("availableModelsForm")?.addEventListener("submit", e => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        fetch("/client/availableModels", { method: "POST", body: formData })
+          .then(res => res.json())
+          .then(models => {
+            const table = document.getElementById("availableModelsTable");
+            table.innerHTML = "";
+            models.forEach(m => {
+              const row = `<tr><td>${m.model_id}</td><td>${m.car_id}</td><td>${m.color}</td><td>${m.construction_year}</td><td>${m.transmission_type}</td></tr>`;
+              table.innerHTML += row;
+            });
+          })
+          .catch(console.error);
+      });
+
+      document.getElementById("combinedBookForm")?.addEventListener("submit", e => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const useBestDriver = document.getElementById("bestDriverToggle").checked;
+
+        const endpoint = useBestDriver ? "/client/bookBestDriver" : "/client/bookRent";
+
+        fetch(endpoint, {
+          method: "POST",
+          body: formData
+        })
+          .then(res => res.ok
+            ? alert(useBestDriver ? "Booked with best driver!" : "Rent booked!")
+            : alert("Booking failed.")
+          )
+          .then(() => window.location.reload())
+          .catch(console.error);
+      });
+
+      document.getElementById("fetchRentHistory")?.addEventListener("click", () => {
+        fetch("/client/rents")
+          .then(res => res.json())
+          .then(rents => {
+            const table = document.getElementById("rentHistoryTable");
+            table.innerHTML = "";
+            rents.forEach(r => {
+              const row = `<tr><td>${r.date}</td><td>${r.model}</td><td>${r.driver}</td></tr>`;
+              table.innerHTML += row;
+            });
+          })
+          .catch(console.error);
+      });
+
+      document.getElementById("reviewForm")?.addEventListener("submit", e => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        fetch("/client/review", { method: "POST", body: formData })
+          .then(res => res.ok ? alert("Review submitted!") : alert("Review failed or not allowed."))
+          .then(() => window.location.reload())
+          .catch(console.error);
+      });
+    });
+  </script>
+</body>
+</html>

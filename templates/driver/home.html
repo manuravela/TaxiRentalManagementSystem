@@ -1,0 +1,131 @@
+<!-- templates/driver/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Driver Dashboard</title>
+  <style>
+    .box {
+      border: 1px solid black;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome, {{ driver.name }}!</h1>
+  <button id="logout">Logout</button>
+
+  <div class="box">
+    <h3>Your Address</h3>
+    <p>Road Name: {{ driver.address_road_name }}</p>
+    <p>Number: {{ driver.address_number }}</p>
+    <p>City: {{ driver.address_city }}</p>
+
+    <form id="addressForm">
+      <h4>Update Address</h4>
+      <input name="address_road_name" placeholder="Road name" required>
+      <input name="address_number" placeholder="Number" required>
+      <input name="address_city" placeholder="City" required>
+      <button type="submit">Update</button>
+    </form>
+  </div>
+
+  <div class="box">
+    <h3>All Car Models</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Model ID</th>
+          <th>Color</th>
+          <th>Year</th>
+          <th>Transmission</th>
+          <th>Car ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for model in models %}
+        <tr>
+          <td>{{ model.model_id }}</td>
+          <td>{{ model.color }}</td>
+          <td>{{ model.construction_year }}</td>
+          <td>{{ model.transmission_type }}</td>
+          <td>{{ model.car_id }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>Declare Car Model You Can Drive</h3>
+    <form id="declareForm">
+      <label>Model ID</label>
+      <input name="model_id" required>
+      <label>Car ID</label>
+      <input name="car_id" required>
+      <button type="submit">Declare</button>
+    </form>
+  </div>
+
+  <div class="box">
+    <h3>Models You’ve Declared</h3>
+    <ul>
+      {% for m in driven %}
+        <li>Model ID: {{ m.model_id }}, Car ID: {{ m.car_id }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <script>
+    const logoutBtn = document.getElementById("logout");
+    const addressForm = document.getElementById("addressForm");
+    const declareForm = document.getElementById("declareForm");
+
+    logoutBtn?.addEventListener("click", () => {
+      fetch("/driver/logout").then(() => {
+        window.location.href = "/driver";
+      });
+    });
+
+    addressForm?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const formData = new FormData(addressForm);
+      fetch("/driver/updateAddress", {
+        method: "POST",
+        body: formData
+      }).then(res => {
+        if (!res.ok) {
+          alert("Failed to update address");
+          return;
+        }
+        alert("Address updated");
+        window.location.reload();
+      }).catch(console.error);
+    });
+
+    declareForm?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const formData = new FormData(declareForm);
+      fetch("/driver/declareModel", {
+        method: "POST",
+        body: formData
+      }).then(res => {
+        if (!res.ok) {
+          alert("Failed to declare model");
+          return;
+        }
+        alert("Model declared successfully");
+        window.location.reload();
+      }).catch(console.error);
+    });
+  </script>
+</body>
+</html>

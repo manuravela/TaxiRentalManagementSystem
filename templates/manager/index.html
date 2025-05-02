@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager</title>
+</head>
+<body>
+  <a href="/">Go back to home page</a>
+  <h1>Login</h1>
+  <form id="loginForm" method="POST" action="/manager/login">
+    <label>Ssn</label>
+    <input name="ssn" placeholder="Type your ssn" required/>
+    <button>Login</button>
+  </form>
+  <h3>Don't have an account yet? Register:</h3>
+  <form id="registerForm" method="POST" action="/manager/register">
+    <label>Name</label>
+    <input name="name" placeholder="Type your name" required/>
+    <label>Ssn</label>
+    <input name="ssn" placeholder="Type your ssn" required/>
+    <label>Email</label>
+    <input type="email" name="email" placeholder="Type your email" required/>
+    <button>Register</button>
+  </form>
+  <script>
+    const loginForm = document.getElementById("loginForm")
+    const registerForm = document.getElementById("registerForm")
+
+    loginForm?.addEventListener("submit", (e) => {
+      e.preventDefault()
+      fetch("/manager/login", {
+        method: "POST",
+        body: new FormData(loginForm)
+      })
+        .then(res => {
+          if (!res.ok) {
+            alert("Cannot login due to existing record or Internal server problem")
+            return
+          }
+          window.location.href = "/manager/home"
+        })
+    })
+
+    registerForm?.addEventListener("submit", (e) => {
+      e.preventDefault()
+      fetch("/manager/register", {
+        method: "POST",
+        body: new FormData(registerForm)
+      })
+        .then(res => {
+          if (!res.ok) {
+            alert("Cannot register due to existing Ssn or Internal server problem")
+            return
+          }
+          window.location.href = "/manager/home"
+        })
+    })
+  </script>
+</body>
+</html>

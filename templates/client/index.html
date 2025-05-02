@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client</title>
+</head>
+<body>
+  <a href="/">Go back to home page</a>
+  <h1>Login</h1>
+  <form id="loginForm" method="POST" action="/client/login">
+    <label>Email</label>
+    <input name="email" type="email" placeholder="Type your email" required />
+    <button>Login</button>
+  </form>
+
+  <h3>Don't have an account yet? Register:</h3>
+  <form id="registerForm" method="POST" action="/client/register">
+    <label>Name</label>
+    <input name="name" placeholder="Type your name" required />
+    <label>Email</label>
+    <input type="email" name="email" placeholder="Type your email" required />
+    <label>Primary Address (road, number, city)</label>
+    <input name="address" placeholder="123 Main St, Apt 2, Chicago" required />
+    <label>Credit Card Number</label>
+    <input name="cc_number" placeholder="1111 1111 1111 1111" required />
+    <label>Credit Card Billing Address (road, number, city)</label>
+    <input name="cc_address" placeholder="456 Elm St, Unit 1, Chicago" required />
+    <button>Register</button>
+  </form>
+
+  <script>
+    const loginForm = document.getElementById("loginForm")
+    const registerForm = document.getElementById("registerForm")
+
+    loginForm?.addEventListener("submit", (e) => {
+      e.preventDefault()
+      fetch("/client/login", {
+        method: "POST",
+        body: new FormData(loginForm)
+      })
+        .then(res => {
+          if (!res.ok) {
+            alert("Cannot login. Invalid credentials or internal server error.")
+            return
+          }
+          window.location.href = "/client/home"
+        })
+    })
+
+    registerForm?.addEventListener("submit", (e) => {
+      e.preventDefault()
+      fetch("/client/register", {
+        method: "POST",
+        body: new FormData(registerForm)
+      })
+        .then(res => {
+          if (!res.ok) {
+            alert("Registration failed. Duplicate email or server error.")
+            return
+          }
+          window.location.href = "/client/home"
+        })
+    })
+  </script>
+</body>
+</html>

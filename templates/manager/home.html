@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      border: 1px solid black;
+      padding: 10px
+    }
+    .result {
+      text-decoration: underline;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome Manager {{ name }}!</h1>
+  <button id="logout">Logout</button>
+
+  <div class="box" >
+    <form id="carInsertForm">
+      <h3>Insert car</h3>
+      <label>Brand</label>
+      <input name="brand" required />
+      <button>Insert car</button>
+    </form>
+
+    <form id="carRemoveForm">
+      <h3>Remove car</h3>
+      <label>Car Id</label>
+      <input name="car_id" required />
+      <button>Remove car</button>
+    </form>
+
+    <form id="modelInsertForm">
+      <h3>Insert model</h3>
+      <label>Color</label>
+      <input name="color" required>
+      <label>Construction year</label>
+      <input name="construction_year" required />
+      <label>Transmission Type</label>
+      <label>
+        <input type="radio" name="transmission_type" value="manual" />
+        Manual
+      </label>
+      <label>
+        <input type="radio" name="transmission_type" value="automatic">
+        Automatic
+      </label>
+      <label>Car id</label>
+      <input name="car_id" required/>
+      <button type="submit">Insert model</button>
+    </form>
+
+    <form id="modelRemoveForm">
+      <h3>Remove model</h3>
+      <label>Model id</label>
+      <input name="model_id" required>
+      <label>Car id</label>
+      <input name="car_id" required>
+      <button type="submit">Remove model</button>
+    </form>
+
+    <form id="driverInsertForm">
+      <h3>Insert driver</h3>
+      <label>Name</label>
+      <input name="name" required />
+      <label>Address Road Name</label>
+      <input name="address_road_name" required />
+      <label>Address Number</label>
+      <input name="address_number" required />
+      <label>Address City</label>
+      <input name="address_city" required />
+      <button>Insert driver</button>
+    </form>
+
+    <form id="driverRemoveForm">
+      <h3>Remove driver</h3>
+      <label>Name</label>
+      <input name="name" required>
+      <button type="submit">Remove driver</button>
+    </form>
+  </div>
+
+  <div class="box">
+    <h3>Top-k clients with respect to the number of rent they book</h3>
+    <form id="topClientsForm">
+      <label>
+        k
+        <input type="number" name="k" required/>
+      </label>
+      <button>Submit</button>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>email</th>
+          <th>name</th>
+          <th>numRents</th>
+        </tr>
+      </thead>
+      <tbody id="topClientsList">
+        
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>Clients from city 1 and book rents of driver from city 2</h3>
+    <form id="twoCityForm">
+      <label>
+        Client City
+        <input name="clientCity" required>
+      </label>
+      <label>
+        Driver City
+        <input name="driverCity" required>
+      </label>
+      <button type="submit">Submit</button>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>email</th>
+          <th>name</th>
+        </tr>
+      </thead>
+      <tbody id="twoCityClientsList">
+        
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>Cars</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>car_id</th>
+          <th>brand</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for car in cars %}
+        <tr>
+          <td>{{car["car_id"]}}</td>
+          <td>{{car["brand"]}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="box">
+    <h3>Models With Number of Rents booked</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>model_id</th>
+          <th>color</th>
+          <th>construction_year</th>
+          <th>transmission_type</th>
+          <th>car_id</th>
+          <th>num_rents</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for model in models %}
+        <tr>
+          <td>{{model["model_id"]}}</td>
+          <td>{{model["color"]}}</td>
+          <td>{{model["construction_year"]}}</td>
+          <td>{{model["transmission_type"]}}</td>
+          <td>{{model["car_id"]}}</td>
+          <td>{{model["num_rents"]}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>Drivers with Number of Rents and Average Rating</h3>
+    <div><em>Note: -1 in rating means the driver has no rating yet.</em></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>number of rents</th>
+          <th>average rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for driver in drivers %}
+        <tr>
+          <td>{{driver["name"]}}</td>
+          <td>{{driver["num_rents"]}}</td>
+          <td>{{driver["avg_rating"]}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <script>
+    const logoutBtn = document.getElementById("logout")
+    const carInsertForm = document.getElementById("carInsertForm")
+    const carRemoveForm = document.getElementById("carRemoveForm")
+    const modelInsertForm = document.getElementById("modelInsertForm")
+    const modelRemoveForm = document.getElementById("modelRemoveForm")
+    const driverInsertForm = document.getElementById("driverInsertForm")
+    const driverRemoveForm = document.getElementById("driverRemoveForm")
+    const topClientsForm = document.getElementById("topClientsForm")
+    const twoCityForm = document.getElementById("twoCityForm")
+    
+    const topClientsList = document.getElementById("topClientsList")
+    const twoCityClientsList = document.getElementById("topCityClientsList")
+
+
+    logoutBtn?.addEventListener("click", () => {
+      fetch("/manager/logout")
+        .then(res => window.location.href = "/manager")
+        .catch(console.error)
+    })
+
+    carInsertForm?.addEventListener("submit", (e) => {
+      e.preventDefault()
+      const formData = new FormData(carInsertForm)
+      fetch("/manager/insertCar", {
+        method: "POST",
+        body: formData
+      })
+        .then((res) => {
+          if (!res.ok) {
+            alert(`failed to insert car: ${formData.get("brand")}`)
+            return
+          }
+          alert(`successfully insert car: ${formData.get("brand")}`)
+          window.location.reload()
+        })
+        .catch(console.error)
+    })
+
+    carRemoveForm?.addEventListener("submit", (e) => {
+      e.preventDefault()
+      const formData = new FormData(carRemoveForm)
+      fetch("/manager/removeCar", {
+        method: "POST",
+        body: formData
+      })
+        .then((res) => {
+          if (!res.ok) {
+            alert(`failed to remove car: ${formData.get("car_id")}`)
+            return
+          }
+          alert(`successfully remove car: ${formData.get("car_id")}`)
+          window.location.reload()
+        })
+        .catch(console.error)
+    })
+
+    modelInsertForm?.addEventListener("submit", (e) => {
+      e.preventDefault()
+      const formData = new FormData(modelInsertForm)
+      if (!formData.get("transmission_type")) {
+        alert("You have to input transmission type for model")
+        return
+      }
+      fetch("/manager/insertModel", {
+        method: "POST",
+        body: formData
+      })
+        .then((res) => {
+          if (!res.ok) {
+            alert(`failed to insert model`)
+            return
+          }
+          alert(`successfully insert model`)
+          window.location.reload()
+        })
+        .catch(console.error)
+    })
+
+    modelRemoveForm?.addEventListener("submit", (e) => {
+      e.preventDefault()
+      const formData = new FormData(modelRemoveForm)
+      fetch("/manager/removeModel", {
+        method: "POST",
+        body: formData
+      })
+        .then((res) => {
+          if (!res.ok) {
+            alert(`failed to remove model: ${formData.get("model_id")}`)
+            return
+          }
+          alert(`successfully remove model: ${formData.get("model_id")}`)
+          window.location.reload()
+        })
+        .catch(console.error)
+    })
+
+    driverInsertForm?.addEventListener("submit", (e) => {
+      e.preventDefault()
+      const formData = new FormData(driverInsertForm)
+      fetch("/manager/insertDriver", {
+        method: "POST",
+        body: formData
+      })
+        .then((res) => {
+          if (!res.ok) {
+            alert(`failed to insert driver: ${formData.get("name")}`)
+            return
+          }
+          alert(`successfully insert driver: ${formData.get("name")}`)
+          window.location.reload()
+        })
+        .catch(console.error)
+    })
+
+    driverRemoveForm?.addEventListener("submit", (e) => {
+      e.preventDefault()
+      const formData = new FormData(driverRemoveForm)
+      fetch("/manager/removeDriver", {
+        method: "POST",
+        body: formData
+      })
+        .then((res) => {
+          if (!res.ok) {
+            alert(`failed to remove driver: ${formData.get("name")}`)
+            return
+          }
+          alert(`successfully remove driver: ${formData.get("name")}`)
+          window.location.reload()
+        })
+        .catch(console.error)
+    })
+
+    topClientsForm?.addEventListener("submit", (e) => {
+      e.preventDefault()
+      const formData = new FormData(topClientsForm)
+      const k = formData.get("k")
+      fetch("/manager/topClients", {
+        method: "POST",
+        body: formData
+      })
+        .then((res) => {
+          if (!res.ok) {
+            alert(`failed to get top ${k} clients`)
+            return
+          }
+          alert(`Successfully get top ${k} clients`)
+          return res.json()
+        })
+        .then(data => {
+          topClientsList.innerHTML = ''
+
+          for (const client of data.clients) {
+            const tr = document.createElement("tr")
+            tr.innerHTML = `<td>${client.email}</td><td>${client.name}</td><td>${client.num_rents}</td>`
+            topClientsList.appendChild(tr)
+          }
+        })
+        .catch(console.error)
+    })
+
+    twoCityForm?.addEventListener("submit", (e) => {
+      e.preventDefault()
+      const formData = new FormData(twoCityForm)
+      const clientCity = formData.get("clientCity")
+      const driverCity = formData.get("driverCity")
+      fetch("/manager/twoCityClients", {
+        method: "POST",
+        body: formData
+      })
+        .then((res) => {
+          if (!res.ok) {
+            alert(`failed to get clients from ${clientCity} who books rent from driver from ${driverCity}`)
+            return
+          }
+          alert(`Successfully get clients whose city from ${clientCity} and driver city from ${driverCity}`)
+          return res.json()
+        })
+        .then(data => {
+          twoCityClientsList.innerHTML = ''
+
+          for (const client of data.clients) {
+            const tr = document.createElement("tr")
+            tr.innerHTML = `<td>${client.email}</td><td>${client.name}</td>`
+            twoCityClientsList.appendChild(tr)
+          }
+        })
+        .catch(console.error)
+    })
+  </script>
+</body>
+</html>
