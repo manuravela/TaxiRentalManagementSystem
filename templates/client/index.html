@@ -15,17 +15,33 @@
   </form>
 
   <h3>Don't have an account yet? Register:</h3>
-  <form id="registerForm" method="POST" action="/client/register">
+  <form id="registerForm" method="POST">
     <label>Name</label>
     <input name="name" placeholder="Type your name" required />
+
     <label>Email</label>
     <input type="email" name="email" placeholder="Type your email" required />
-    <label>Primary Address (road, number, city)</label>
-    <input name="address" placeholder="123 Main St, Apt 2, Chicago" required />
-    <label>Credit Card Number</label>
-    <input name="cc_number" placeholder="1111 1111 1111 1111" required />
-    <label>Credit Card Billing Address (road, number, city)</label>
-    <input name="cc_address" placeholder="456 Elm St, Unit 1, Chicago" required />
+
+    <h4>Primary Address</h4>
+    <label>Road</label>
+    <input name="address_road" required />
+    <label>Number</label>
+    <input name="address_number" required />
+    <label>City</label>
+    <input name="address_city" required />
+
+    <h4>Credit Card</h4>
+    <label>Number</label>
+    <input name="cc_number" required />
+
+    <h4>Credit Card Billing Address</h4>
+    <label>Road</label>
+    <input name="cc_road" required />
+    <label>Number</label>
+    <input name="cc_number_addr" required />
+    <label>City</label>
+    <input name="cc_city" required />
+
     <button>Register</button>
   </form>
 
@@ -50,9 +66,17 @@
 
     registerForm?.addEventListener("submit", (e) => {
       e.preventDefault()
+      const formData = new FormData(registerForm)
+
+      const primaryAddress = `${formData.get("address_road")},${formData.get("address_number")},${formData.get("address_city")}`
+      const ccAddress = `${formData.get("cc_road")},${formData.get("cc_number_addr")},${formData.get("cc_city")}`
+
+      formData.set("address", primaryAddress)
+      formData.set("cc_address", ccAddress)
+
       fetch("/client/register", {
         method: "POST",
-        body: new FormData(registerForm)
+        body: formData
       })
         .then(res => {
           if (!res.ok) {
