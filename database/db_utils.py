@@ -432,3 +432,30 @@ def hasClientRentedFromDriver(email, driver_name):
 def insertReview(driver_name, client_email, rating, message):
     cursor.execute("INSERT INTO Review (driver_name, client_email, rating, message) VALUES (%s, %s, %s, %s);", (driver_name, client_email, rating, message))
     connection.commit()
+
+
+def checkCarDeclaredByAnyDriver(car_id):
+    sql = """
+        SELECT driver_name
+        FROM DriverDrivesModel
+        WHERE car_id = %s;
+    """
+
+    cursor.execute(sql, [car_id])
+    data = cursor.fetchone()
+    if data:
+        return True
+    return False
+
+def checkModelDeclaredByAnyDriver(model_id, car_id):
+    sql = """
+        SELECT driver_name
+        FROM DriverDrivesModel
+        WHERE model_id = %s AND car_id = %s;
+    """
+
+    cursor.execute(sql, [model_id, car_id])
+    data = cursor.fetchone()
+    if data:
+        return True
+    return False

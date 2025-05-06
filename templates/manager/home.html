@@ -255,9 +255,10 @@
         method: "POST",
         body: formData
       })
-        .then((res) => {
+        .then(async (res) => {
           if (!res.ok) {
-            alert(`failed to remove car: ${formData.get("car_id")}`)
+            const errorText = await res.text()
+            alert(`failed to remove car: ${formData.get("car_id")}: ${errorText}`)
             return
           }
           alert(`successfully remove car: ${formData.get("car_id")}`)
@@ -295,9 +296,10 @@
         method: "POST",
         body: formData
       })
-        .then((res) => {
+        .then(async (res) => {
           if (!res.ok) {
-            alert(`failed to remove model: ${formData.get("model_id")}`)
+            const errorText = await res.text()
+            alert(`failed to remove model: ${formData.get("model_id")}: ${errorText}`)
             return
           }
           alert(`successfully remove model: ${formData.get("model_id")}`)

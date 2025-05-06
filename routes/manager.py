@@ -98,6 +98,11 @@ def insertCar():
 def removeCar():
     try:
         car_id = int(request.form.get("car_id"))
+        
+        # check if any driver drives the car
+        if db_utils.checkCarDeclaredByAnyDriver(car_id):
+            return "This car is declared by a driver", 400
+        
         if db_utils.removeCar(car_id):
             return "", 200
         else:
@@ -125,6 +130,11 @@ def removeModel():
     try:
         model_id = int(request.form.get("model_id"))
         car_id = int(request.form.get("car_id"))
+
+        # check if any driver drives model
+        if db_utils.checkModelDeclaredByAnyDriver(model_id, car_id):
+            return "This model is declared by a driver", 400
+
         if db_utils.removeModel(model_id, car_id):
             return "", 200
         else:
